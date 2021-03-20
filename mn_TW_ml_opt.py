@@ -49,7 +49,7 @@ def get_config(args=None):
     parser.add_argument('--num_episode', type=int, default=40000, help="number of training episode")
     parser.add_argument('--max_num_rows', type=int, default=2000000, help="")
     parser.add_argument('--num_paths_to_ruin', type=int, default=2, help="")
-    parser.add_argument('--batch_size', type=int, default=1000, help='batch size')
+    parser.add_argument('--batch_size', type=int, default=550, help='batch size')
     parser.add_argument('--max_rollout_steps', type=int, default=20000, help="maximum rollout steps")
     parser.add_argument('--max_rollout_seconds', type=int, default=100000, help="maximum rollout time in seconds")
     parser.add_argument('--use_cyclic_rollout', type=str2bool, nargs='?', const=True, default=False, help="use cyclic rollout")
@@ -2022,9 +2022,6 @@ def reconstruct_solution_dep(problem, existing_solution, step):
         while i <= n:
             to_indices = []
             adjusted_distances = []
-            # if len(trip) > 1:
-            #     to_indices.append(0)
-            #     adjusted_distances.append(calculate_adjusted_distance_between_indices(problem, trip[-1], 0))
             p=0
             for j in range(i, n + 1):
                 if problem.get_capacity(customer_indices[j]) > capacity_left:
@@ -2056,7 +2053,6 @@ def reconstruct_solution_dep(problem, existing_solution, step):
             trip.append(0)
             solution.append(trip)
 
-    print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
     while len(solution) < len(paths_ruined):
         solution.append([0, 0])
     improved_solution = copy.deepcopy(existing_solution)
