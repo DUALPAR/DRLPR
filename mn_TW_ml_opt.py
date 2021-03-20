@@ -16,7 +16,7 @@ from sequence_encoder import encode_seq, embed_seq
 from path_encoder import p_encode_seq, p_embed_seq
 
 
-os.environ["CUDA_VISIBLE_DEVICES"]="2"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 setproctitle.setproctitle("l2i@zhouyikang")
 
 
