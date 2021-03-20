@@ -324,9 +324,6 @@ def calculate_outside_ratio(problem,solution):
 
 
 def validate_solution(problem, solution, distance=None):
-    #print(problem.get_capacity(path[0]))
-    #print(problem.get_capacity(path[1]))
-    #print(problem.get_capacity(path[2]))
     if config.problem == 'tsp':
         if len(solution) != 1:
             return False
@@ -431,7 +428,6 @@ def relocate(trip):
     min_delta = -1e-6
     min_first, min_second = None, None
     for first in range(n):
-        # for second in range(n):
         for away in range(-10, 10, 1):
             second = (first + away + n) % n
             if second == (first - 1 + n) % n or second == first:
@@ -482,11 +478,6 @@ def mutate(trip):
 
 
 def is_illegal_path(problem,path):
-    #feasible_1 = False
-    #for i in range(0, len(path)):
-    #    if path[i] != 0 and path[i] % 2 == 0 and (path[i]-1) not in path[0:i]:
-            #print(1)
-    #        return True
     if len(path)>config.max_points_per_trip:
         return True
     capacity_left = problem.get_capacity(0)
@@ -494,16 +485,10 @@ def is_illegal_path(problem,path):
         if path[i]!=0:
             capacity_left -= problem.get_capacity(path[i])
             if capacity_left < 0:
-                #print(2)
                 return True
     for i in range(0, len(path)):
         if path[i] != 0 and path[i] % 2 == 0 and (path[i]-1) not in path[0:i]:
-            #print(1)
             return True
-    #if(calculate_path_distance(problem,path)>config.max_path_distance):
-        #print(calculate_path_distance(problem,path))
-        #print(config.max_path_distance)
-    #    return True
     return False
 
 
@@ -551,9 +536,7 @@ def two_opt_path(problem, path,last_time_cost):
             delta+=(calculate_time_cost(problem,path_tmp)-last_time_cost)
             if is_illegal_path(problem, path_tmp):
                 delta=float('inf')
-                #print("Snaaaaaaaaaaaaa")
             if delta < min_delta:
-                #print("yuuuuuuuuuuuuuuuuuuuu")
                 min_delta = delta
                 label = first, second
     if label is None:
@@ -567,9 +550,6 @@ def do_exchange_path_pair(path, firstp, secondp, firstd, secondd):
     improved_path = copy.deepcopy(path)
     improved_path[firstp], improved_path[firstd],improved_path[secondp], improved_path[secondd] \
             = improved_path[secondp], improved_path[secondd], improved_path[firstp], improved_path[firstd]
-    #print(path)
-    #print("##########")
-    #print(improved_path)
     return improved_path
 
 
@@ -588,71 +568,20 @@ def exchange_path_pair(problem,path,last_time_cost):
         for secondp in range(firstp+1,n-1):
             if path[secondp]%2==0:
                 continue
-            #print(secondp,'sp')
-            #print(problem.get_capacity(path[secondp]),'spcap')
-            #print(consumption[firstp-1],'fp')
-
             if problem.get_capacity(path[secondp])+consumption[firstp-1]>problem.get_capacity(0):
                 continue
             secondd=find_point_index_in_path(path[secondp]+1,path)
-            #if firstp==firstd-1:
-            #    before1= calculate_distance_between_indices(problem, path[firstp - 1], path[firstp]) \
-            #             + calculate_distance_between_indices(problem, path[firstd], path[firstd + 1]) \
-            #             + calculate_distance_between_indices(problem, path[firstp], path[firstd])
-            #    after1=calculate_distance_between_indices(problem, path[firstp - 1], path[secondp]) \
-            #           + calculate_distance_between_indices(problem, path[secondd], path[firstd + 1]) \
-            #           + calculate_distance_between_indices(problem, path[secondd], path[secondp])
-            #else:
-            #    before1= calculate_distance_between_indices(problem, path[firstp - 1], path[firstp]) \
-            #             + calculate_distance_between_indices(problem, path[firstd], path[firstd + 1]) \
-            #             + calculate_distance_between_indices(problem, path[firstp], path[firstp+1]) \
-            #             + calculate_distance_between_indices(problem, path[firstd], path[firstd - 1])
-            #    after1 = calculate_distance_between_indices(problem, path[firstp - 1], path[secondp]) \
-            #           + calculate_distance_between_indices(problem, path[secondd], path[firstd + 1]) \
-            #           + calculate_distance_between_indices(problem, path[secondd], path[firstd-1]) \
-            #           + calculate_distance_between_indices(problem, path[secondp], path[firstp + 1])
-            #if secondp==secondd-1:
-            #    before2= calculate_distance_between_indices(problem, path[secondp - 1], path[secondp]) \
-            #             + calculate_distance_between_indices(problem, path[secondd], path[secondd + 1]) \
-            #             + calculate_distance_between_indices(problem, path[secondp], path[secondd])
-            #    after2=calculate_distance_between_indices(problem, path[secondp - 1], path[firstp]) \
-            #           + calculate_distance_between_indices(problem, path[firstd], path[secondd + 1]) \
-            #           + calculate_distance_between_indices(problem, path[firstd], path[firstp])
-            #else:
-            #    before2= calculate_distance_between_indices(problem, path[secondp - 1], path[secondp]) \
-            #             + calculate_distance_between_indices(problem, path[secondd], path[secondd + 1]) \
-            #             + calculate_distance_between_indices(problem, path[secondp], path[secondp+1]) \
-            #             + calculate_distance_between_indices(problem, path[secondd], path[secondd - 1])
-            #    after2 = calculate_distance_between_indices(problem, path[secondp - 1], path[firstp]) \
-            #           + calculate_distance_between_indices(problem, path[firstd], path[secondd - 1]) \
-            #           + calculate_distance_between_indices(problem, path[firstd], path[secondd+1]) \
-            #           + calculate_distance_between_indices(problem, path[firstp], path[secondp + 1])
-            
-            #print(before1)
-            #print(before2)
-            #print(after1)
-            #print(after2)
             pathtmp=do_exchange_path_pair(path,firstp,secondp,firstd,secondd)
             if is_illegal_path(problem,pathtmp):
                 continue
                 delta=float('inf')
             delta=calculate_path_distance(problem,pathtmp)-calculate_path_distance(problem,path)
-            #print(calculate_time_cost(problem,path),'ccpath')
-            #print(last_time_cost,'llpath')
-            #delta+=(calculate_time_cost(problem,pathtmp)-last_time_cost)
-            #print("woshishabi")
-            #if is_illegal_path(problem,pathtmp):
-            #    delta=float('inf')
             if delta < min_delta:
                 min_delta = delta
                 label = firstp, secondp, firstd, secondd
     if label is None:
         return None, None, None
     else:
-        #sss=do_exchange_path_pair(path, label[0], label[1],label[2],label[3])
-        #print(calculate_time_cost(problem,sss),'sss')
-        #print(min_delta,'dtar')
-        #print(calculate_path_distance(problem,sss)-calculate_path_distance(problem,path),'distcha')
         return do_exchange_path_pair(path, label[0], label[1],label[2],label[3]), min_delta, label
 
 
@@ -668,32 +597,11 @@ def exchange_path(problem, path,last_time_cost):
     label = None
     for first in range(1, n - 1):
         for second in range(first + 1, n):
-            '''
-            if second == first + 1:
-                before = calculate_distance_between_indices(problem, path[first - 1], path[first]) \
-                     + calculate_distance_between_indices(problem, path[second], path[second + 1])
-                after = calculate_distance_between_indices(problem, path[first - 1], path[second]) \
-                     + calculate_distance_between_indices(problem, path[first], path[second + 1])
-            else:
-                before = calculate_distance_between_indices(problem, path[first - 1], path[first]) \
-                     + calculate_distance_between_indices(problem, path[first], path[first + 1]) \
-                     + calculate_distance_between_indices(problem, path[second - 1], path[second]) \
-                     + calculate_distance_between_indices(problem, path[second], path[second + 1])
-                after = calculate_distance_between_indices(problem, path[first - 1], path[second]) \
-                     + calculate_distance_between_indices(problem, path[second], path[first + 1]) \
-                     + calculate_distance_between_indices(problem, path[second - 1], path[first]) \
-                     + calculate_distance_between_indices(problem, path[first], path[second + 1])
-            '''
-            #delta = after - before
             path_tmp=do_exchange_path(path,first,second)
             if is_illegal_path(problem, path_tmp):
                 continue
                 delta=float('inf')
             delta=calculate_path_distance(problem,path_tmp)-calculate_path_distance(problem,path)
-            #delta+=(calculate_time_cost(problem,path_tmp)-last_time_cost)
-            #if is_illegal_path(problem, path_tmp):
-            #    delta=float('inf')
-                #print("Ssaaaaaaaaaaaaaaa")
             if delta < min_delta:
                 min_delta = delta
                 label = first, second
@@ -720,23 +628,10 @@ def relocate_path(problem, path,last_time_cost, exact_length=1):
         for second in range(n):
             if second >= first - 1 and second <= first_tail:
                 continue
-            '''
-            before = calculate_distance_between_indices(problem, path[first - 1], path[first]) \
-                    + calculate_distance_between_indices(problem, path[first_tail], path[first_tail + 1]) \
-                    + calculate_distance_between_indices(problem, path[second], path[second + 1])
-            after = calculate_distance_between_indices(problem, path[first - 1], path[first_tail + 1]) \
-                    + calculate_distance_between_indices(problem, path[second], path[first]) \
-                    + calculate_distance_between_indices(problem, path[first_tail], path[second + 1])
-            '''
-            #delta = after - before
             path_tmp=do_relocate_path(path,first,first_tail,second)
             if(is_illegal_path(problem,path_tmp)):
                 continue
             delta=calculate_path_distance(problem,path_tmp)-calculate_path_distance(problem,path)
-            #delta+=(calculate_time_cost(problem,path_tmp)-last_time_cost)
-            #if is_illegal_path(problem, path_tmp):
-            #    delta=float('inf')
-            #print("Spaaaaaaaaaaaaaaa")
             if delta < min_delta:
                 min_delta = delta
                 label = first, first_tail, second
@@ -801,25 +696,7 @@ def cross_two_paths(problem, path_first, path_second, improved_solution,last_tim
                     + calculate_distance_between_indices(problem, path_second[second], path_first[first + 1])
             delta = after - before
             delta+=(calculate_time_cost(problem,path_first_temp)-last_time_cost_first+calculate_time_cost(problem,path_second_temp)-last_time_cost_second)
-            #improved_solution_tmp = copy.deepcopy(improved_solution)
-            #path_index_first = find_path_index_in_solution(path_first, improved_solution)
-            #path_index_second = find_path_index_in_solution(path_second, improved_solution)
-            #improved_solution_tmp[path_index_first] = path_first_temp
-            #improved_solution_tmp[path_index_second] = path_second_temp
-            #if is_illegal_solution(improved_solution_tmp):
-            #    delta=float('inf')
-            #if is_illegal_two_paths(path_first_temp, path_second_temp):
-            #    delta=float('inf')
-            #print(path_first)
-            #print(path_second)
-            #print("#################")
-            #print(path_first_temp)
-            #print(path_second_temp)
-            #if is_illegal_path(problem,path_first_temp) or is_illegal_path(problem, path_second_temp):
-            #    delta=float('inf')
-                #print("Saaaaaalaaaaa")
             if delta < min_delta:
-                #print("yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
                 min_delta = delta
                 label = first, second
     if label is None:
@@ -871,20 +748,7 @@ def relocate_two_paths(problem, path_first, path_second, improved_solution,last_
                      + calculate_distance_between_indices(problem, path_first[first_tail], path_second[second + 1])
                 delta = after - before
                 delta+=(calculate_time_cost(problem,path_first_temp)-last_time_cost_first+calculate_time_cost(problem,path_second_temp)-last_time_cost_second)
-                #improved_solution_tmp = copy.deepcopy(improved_solution)
-                #path_index_first = find_path_index_in_solution(path_first, improved_solution)
-                #path_index_second = find_path_index_in_solution(path_second, improved_solution)
-                #improved_solution_tmp[path_index_first] = path_first_temp
-                #improved_solution_tmp[path_index_second] = path_second_temp
-                #if is_illegal_solution(improved_solution_tmp):
-                #    delta=float('inf')
-                #if is_illegal_two_paths(path_first_temp, path_second_temp):
-                #    delta=float('inf')
-                #if is_illegal_path(problem, path_first_temp) or is_illegal_path(problem, path_second_temp):
-                #    delta = float('inf')
-                    #print("Saahaaaaaaaaaaaaa")
                 if delta < min_delta:
-                    #print("yuuuuuuuuu")
                     min_delta = delta
                     label = first, first_tail, second
     if label is None:
@@ -947,15 +811,6 @@ def exchange_two_paths(problem, path_first, path_second, improved_solution,last_
                         pass
                     else:
                         continue
-                    #before = calculate_distance_between_indices(problem, path_first[first - 1], path_first[first]) \
-                    # + calculate_distance_between_indices(problem, path_first[first_tail], path_first[first_tail + 1])\
-                    # + calculate_distance_between_indices(problem, path_second[second - 1], path_second[second])\
-                    # + calculate_distance_between_indices(problem, path_second[second_tail], path_second[second_tail + 1])
-                    #after = calculate_distance_between_indices(problem, path_first[first - 1], path_second[second]) \
-                    # + calculate_distance_between_indices(problem, path_second[second_tail], path_first[first_tail + 1])\
-                    # + calculate_distance_between_indices(problem, path_second[second - 1], path_first[first])\
-                    # + calculate_distance_between_indices(problem, path_first[first_tail], path_second[second_tail + 1])
-                    #delta = after - before
                     path_first_temp, path_second_temp = do_exchange_two_paths(path_first, path_second, first, first_tail, second,second_tail)
                     if is_illegal_path(problem,path_first_temp) or is_illegal_path(problem, path_second_temp):
                         continue
@@ -969,29 +824,10 @@ def exchange_two_paths(problem, path_first, path_second, improved_solution,last_
                      + calculate_distance_between_indices(problem, path_first[first_tail], path_second[second_tail + 1])
                     delta = after - before
                     delta+=(calculate_time_cost(problem,path_first_temp)-last_time_cost_first+calculate_time_cost(problem,path_second_temp)-last_time_cost_second)
-                    #print(path_first)
-                    #print(path_second)
-                    #print("###############")
-                    #print(path_first_temp)
-                    #print(path_second_temp)
-                    #improved_solution_tmp = copy.deepcopy(improved_solution)
-                    #path_index_first = find_path_index_in_solution(path_first, improved_solution)
-                    #path_index_second = find_path_index_in_solution(path_second, improved_solution)
-                    #improved_solution_tmp[path_index_first] = path_first_temp
-                    #improved_solution_tmp[path_index_second] = path_second_temp
-                    #if is_illegal_solution(improved_solution_tmp):
-                    #    delta=float('inf')
-                    #if is_illegal_two_paths(path_first_temp, path_second_temp):
-                    #    delta=float('inf')
-                    #if is_illegal_path(problem,path_first_temp) or is_illegal_path(problem, path_second_temp):
-                    #    delta = float('inf')
-                        #print("Saaaaaaaaaa")
                     if delta < -EPSILON:
-                        #print("yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
                         all_delta += delta
                         label = first, first_tail, second, second_tail
                         path_first, path_second = do_exchange_two_paths(path_first, path_second, label[0], label[1], label[2], label[3])
-                        #TODO(xingwen): speedup
                         n_first = len(path_first) - 1
                         n_second = len(path_second) - 1
                         consumed_capacities_first = calculate_consumption(problem, path_first)
@@ -1043,13 +879,10 @@ def detect_best_insert_loc(problem, best_point_index, delivery_index, start_inde
     #print(path_tmp,'btmp')
     best_distance +=(calculate_time_cost(problem,path_tmp)-calculate_time_cost(problem,path))
     insert_index = start_index
-    #print(path_tmp,'btmp')
-    #print("best"+str(best_distance))
     for i in range(start_index,len(path)-1):
         new_distance = calculate_distance_between_indices(problem,path[i],path_to_exchange[delivery_index])+calculate_distance_between_indices(problem, path[i+1],path_to_exchange[delivery_index])
         #print("new"+str(new_distance))
         path_tmp=path[:start_index]+[path_to_exchange[best_point_index]]+path[start_index:i+1]+[path_to_exchange[delivery_index]]+path[i+1:]
-        #print(path_tmp,'mtmp')
         new_distance+=(calculate_time_cost(problem,path_tmp)-calculate_time_cost(problem,path))
         if new_distance<best_distance:
             best_distance=new_distance
@@ -1059,18 +892,9 @@ def detect_best_insert_loc(problem, best_point_index, delivery_index, start_inde
     
     
 def do_best_point_exchange(path_first, path_to_exchange, best_point_index, delivery_index, first, insert_index):
-    #print(path_first)
-    #print(path_to_exchange)
-    #print(first)
-    #print(insert_index)
-    #print(delivery_index)
-    #print(best_point_index)
     ret1=path_first[:(first+1)]+[path_to_exchange[best_point_index]]+path_first[(first+1):insert_index]+ \
                  [path_to_exchange[delivery_index]]+path_first[insert_index:]
     ret2=path_to_exchange[:best_point_index]+path_to_exchange[(best_point_index+1):delivery_index]+path_to_exchange[(delivery_index+1):]
-    #print("###############")
-    #print(ret1)
-    #print(ret2)
     return path_first[:(first+1)]+[path_to_exchange[best_point_index]]+path_first[(first+1):insert_index]+ \
                  [path_to_exchange[delivery_index]]+path_first[insert_index:],\
            path_to_exchange[:best_point_index]+path_to_exchange[(best_point_index+1):delivery_index]+path_to_exchange[(delivery_index+1):]
@@ -1128,14 +952,6 @@ def best_point_exchange(problem, path_first,solution,last_time_cost):
                      +calculate_distance_between_indices(problem, path_first[insert_index-1], path_to_exchange[delivery_index])\
                      +calculate_distance_between_indices(problem, path_to_exchange[delivery_index], path_first[insert_index])
         delta = after1+after2-before1-before2
-        #improved_path_first_tmp, improved_path_second_tmp = do_best_point_exchange(path_first,path_to_exchange,best_point_index,delivery_index,first,insert_index)
-        #if is_illegal_path(problem, improved_path_first_tmp):
-        #    continue
-        #print(calculate_time_cost(problem,improved_path_first_tmp),'ft')
-        #print(calculate_time_cost(problem,improved_path_second_tmp),'st')
-        #print(calculate_time_cost(problem,path_to_exchange),'ex')
-        #print(calculate_time_cost(problem,path_first),'f')
-        #print(last_time_cost,'lf')
         delta += (calculate_time_cost(problem,improved_path_first_tmp)-last_time_cost+calculate_time_cost(problem,improved_path_second_tmp)-calculate_time_cost(problem,path_to_exchange))
         #if is_illegal_path(problem, improved_path_first_tmp):
             #print("salaibe")
@@ -1357,10 +1173,6 @@ def improve_solution_by_action(step, problem, solution, action,path_aim_1,path_a
     improved_solution = copy.deepcopy(solution)
     all_delta = 0.0
     num_paths = len(improved_solution)
-    
-    #for path_index in range(num_paths):
-    #    ipvpathtmp1,min_delta_tmp,labtmp=exchange_path_pair(problem, solution[path_index])
-        
 
 
     if action in [1, 2, 3, 4,5,6,11, 16] or config.problem == 'tsp':
@@ -1390,11 +1202,7 @@ def improve_solution_by_action(step, problem, solution, action,path_aim_1,path_a
                     6: 4,
                 }
                 improved_path, delta, label = relocate_path(problem, improved_solution[path_index],last_time_cost, exact_length=exact_lengths[action])
-                    
-                #print(improved_solution_tmp)
-                #print(is_illegal_solution(improved_solution_tmp))
             if label and action!=11:
-                #print("like"+str(action))
                 modified = True
                 if not just_test:
                     problem.mark_change_at(step, [path_index])
@@ -1402,35 +1210,17 @@ def improve_solution_by_action(step, problem, solution, action,path_aim_1,path_a
                 last_time_cost = calculate_time_cost(problem,improved_path)
                 all_delta += delta
             elif label :
-                #print("like")
                 modefied=True
                 if not just_test:
                     problem.mark_change_at(step,[path_index,exchange_index])
-                #print(path_index)
-                #print(improved_path)
-                #print(exchange_index)
-                #print(improved_path_to_exchange)
-                #print("fact")
-                #ass=calculate_solution_distance(problem, improved_solution)
                 improved_solution[path_index] = improved_path
                 improved_solution[exchange_index] = improved_path_to_exchange
                 last_time_cost = calculate_time_cost(problem,improved_path)
-                #print(calculate_solution_distance(problem,  improved_solution)-ass)
-                #print(improved_solution)
                 all_delta+=delta
             else:
-                #print("axx"+str(action))
                 modified = False
                 if not just_test:
                     problem.mark_no_improvement(step, action, path_index)
-        #print(improved_solution)
-        #for path in improved_solution:
-        #    if is_illegal_path(problem,path):
-        #        print("ha")
-        #        return solution,0.0
-        #if is_illegal_solution(improved_solution):
-            #print("ha")
-        #    return solution, 0.0
         return improved_solution, all_delta
 
     path_index_first=path_aim_1
@@ -1444,26 +1234,12 @@ def improve_solution_by_action(step, problem, solution, action,path_aim_1,path_a
         last_time_cost_second=calculate_time_cost(problem,improved_solution[path_index_second])
     if action in ([7] + list(range(12, 16))):
         while modified:
-            #print(last_time_cost_first,'ltcfpre')
-            #print(last_time_cost_second,'ltcspre')
             if action == 7:
                 improved_path_first, improved_path_second, delta, label = cross_two_paths(
                     problem, improved_solution[path_index_first], improved_solution[path_index_second], improved_solution,last_time_cost_first,last_time_cost_second)
-                #if not label:
-                #    improved_path_first, improved_path_second, delta, label = cross_two_paths(
-                #        problem, improved_solution[path_index_first], improved_solution[path_index_second][::-1], improved_solution,last_time_cost_first,last_time_cost_second)
             else:
-                #print(last_time_cost_first,'ltcf')
-                #print(last_time_cost_second,'ltcs')
-                #print(calculate_time_cost(problem,improved_solution[path_index_first]),'ccltcf')
-                #print(calculate_time_cost(problem,improved_solution[path_index_second]),'ccltcs')
                 improved_path_first, improved_path_second, delta, label = exchange_two_paths(
                     problem, improved_solution[path_index_first], improved_solution[path_index_second], improved_solution,last_time_cost_first,last_time_cost_second, get_exact_lengths_for_exchange_two_paths(action))
-                    
-            #improved_solution_tmp[path_index_first] = improved_path_first
-            #improved_solution_tmp[path_index_second] = improved_path_second
-            #print(improved_solution_tmp)
-            #print(is_illegal_solution(improved_solution_tmp))
             if label :
                 modified = True
                 if not just_test:
@@ -1493,10 +1269,6 @@ def improve_solution_by_action(step, problem, solution, action,path_aim_1,path_a
             return solution,0.0
         improved_path_first, improved_path_second, delta, label = relocate_two_paths(
             problem, improved_solution[path_index_first], improved_solution[path_index_second], improved_solution, last_time_cost_first,last_time_cost_second, action - 7)
-        #improved_solution_tmp[path_index_first] = improved_path_first
-        #improved_solution_tmp[path_index_second] = improved_path_second
-        #print(improved_solution_tmp)
-        #print(is_illegal_solution(improved_solution_tmp))
         if label :
             modified = True
             if not just_test:
@@ -1508,10 +1280,6 @@ def improve_solution_by_action(step, problem, solution, action,path_aim_1,path_a
 
             all_delta += delta
             improved_path_first, improved_path_second, delta, label = relocate_two_paths(problem, improved_solution[path_index_second], improved_solution[path_index_first], improved_solution,last_time_cost_second,last_time_cost_first, action - 7)
-            #improved_solution_tmp[path_index_first] = improved_path_first
-            #improved_solution_tmp[path_index_second] = improved_path_second
-            #print(improved_solution_tmp)
-            #print(is_illegal_solution(improved_solution_tmp))
         if label :
             modified = True
             if not just_test:
@@ -1525,55 +1293,6 @@ def improve_solution_by_action(step, problem, solution, action,path_aim_1,path_a
             if not just_test:
                 problem.mark_no_improvement(step, action, path_index_first, path_index_second)
 
-    while action == 99 and modified:
-        #return improved_solution, all_delta
-        modified = False
-        improved_path_first, improved_path_second, delta, customer_index = eject_two_paths(
-            problem, improved_solution[path_index_first], improved_solution[path_index_second], improved_solution)
-        if customer_index:
-            for path_index_third in range(num_paths):
-                if path_index_third == path_index_first or path_index_third == path_index_second:
-                    continue
-                improved_path_third, delta_insert, label = insert_into_path(improved_solution[path_index_third], customer_index)
-                if label is not None and (delta + delta_insert) < -EPSILON:
-                    modified = True
-                    problem.mark_change_at(step, [path_index_first, path_index_second, path_index_third])
-                    improved_solution[path_index_first] = improved_path_first
-                    improved_solution[path_index_second] = improved_path_second
-                    improved_solution[path_index_third] = improved_path_third
-                    all_delta += delta + delta_insert
-                    break
-        improved_path_first, improved_path_second, delta, customer_index = eject_two_paths(
-            problem, improved_solution[path_index_second], improved_solution[path_index_first], improved_solution)
-        if customer_index:
-            for path_index_third in range(num_paths):
-                if path_index_third == path_index_first or path_index_third == path_index_second:
-                    continue
-                improved_path_third, delta_insert, label = insert_into_path(improved_solution[path_index_third], customer_index)
-                if label is not None and (delta + delta_insert) < -EPSILON:
-                    modified = True
-                    problem.mark_change_at(step, [path_index_first, path_index_second, path_index_third])
-                    improved_solution[path_index_first] = improved_path_second
-                    improved_solution[path_index_second] = improved_path_first
-                    improved_solution[path_index_third] = improved_path_third
-                    all_delta += delta + delta_insert
-                    break
-        if not modified:
-            problem.mark_no_improvement(step, action, path_index_first, path_index_second)
-    #print(improved_solution)
-    #for path in improved_solution:
-    #    if is_illegal_path(problem,path):
-    #        print("ha")
-    #        return solution,0.0
-    #if is_illegal_solution(improved_solution):
-        #print("ha")
-    #    return solution, 0.0
-    #if(calculate_solution_distance(problem,solution)+all_delta<0):
-    #    print(solution,'sol')
-    #    print(improved_solution,'isol')
-    #    print(all_delta,'adt')
-    #    print(action,'act')
-    #    print(step,'stp')
     return improved_solution, all_delta
 
 
@@ -1635,24 +1354,24 @@ def get_random_capacities(n):
               3, -3, 2, -2, 4, -4, 8, -8, 6, -6, 7, -7, 4, -4, 3, -3,
               3, -3, 2, -2, 4, -4, 8, -8, 6, -6, 7, -7, 4, -4, 3, -3]
         '''
-        capacities= [10,2,-2,8,-8,5,-5,1,-1,10,-10,5,-5,9,-9,9,-9,3,-3,5,-5,6,-6,6,-6,2,-2,8,-8,2,-2,2,-2,6,-6,3,-3,8,-8,7,-7,2,-2,5,-5,3,-3,4,-4,3,-3]
-        '''
-        capacities=[0 for i in range(n)]
-        capacities[0]=10
-        for i in range(1,n):
-            if(i%2):
-                capacities[i]=np.random.randint(1,10)
-            else:
-                capacities[i]=-capacities[i-1]
-        '''      
+        #capacities= [10,2,-2,8,-8,5,-5,1,-1,10,-10,5,-5,9,-9,9,-9,3,-3,5,-5,6,-6,6,-6,2,-2,8,-8,2,-2,2,-2,6,-6,3,-3,8,-8,7,-7,2,-2,5,-5,3,-3,4,-4,3,-3]
+        
+    capacities=[0 for i in range(n)]
+    capacities[0]=10
+    for i in range(1,n):
+        if(i%2):
+            capacities[i]=np.random.randint(1,10)
+        else:
+            capacities[i]=-capacities[i-1]
+              
     return capacities
 
 
 def get_time_windows(n):
     #TWs=[(0,10000), (9, 13), (14, 15), (1, 2), (6, 9), (2, 3), (9, 11), (1, 5), (9, 13), (3, 6), (11, 12), (7, 8), (14, 16), (4, 7), (13, 14), (6, 10), (7, 10), (3, 6), (13, 14), (3, 7), (11, 14), (15, 19), (10, 12), (9, 10), (5, 9), (13, 14), (11, 12), (6, 8), (5, 9), (3, 5), (9, 12), (12, 16), (14, 17), (0, 3), (0, 3), (0, 1), (6, 8), (2, 4), (2, 5), (14, 16), (9, 10), (13, 17), (4, 7), (4, 5), (6, 7), (11, 12), (0, 4), (2, 6), (1, 4), (6, 9), (1, 3)]
 
-    TWs=[(0,10000), (9, 13), (15, 16), (1, 2), (3, 6), (2, 3), (6, 8), (1, 5), (7, 11), (3, 6), (7, 8), (7, 8), (11, 13), (4, 7), (8, 9), (6, 10), (13, 16), (3, 6), (7, 8), (3, 7), (9, 12), (15, 19), (22, 24), (9, 10), (11, 15), (13, 14), (17, 18), (6, 8), (9, 13), (3, 5), (7, 10), (12, 16), (19, 22), (0, 3), (5, 8), (0, 1), (4, 6), (2, 4), (6, 9), (14, 16), (17, 18), (13, 17), (18, 21), (4, 5), (7, 8), (11, 12), (13, 17), (2, 6), (9, 12), (6, 9), (10, 12)]
-    ''' 
+    #TWs=[(0,10000), (9, 13), (15, 16), (1, 2), (3, 6), (2, 3), (6, 8), (1, 5), (7, 11), (3, 6), (7, 8), (7, 8), (11, 13), (4, 7), (8, 9), (6, 10), (13, 16), (3, 6), (7, 8), (3, 7), (9, 12), (15, 19), (22, 24), (9, 10), (11, 15), (13, 14), (17, 18), (6, 8), (9, 13), (3, 5), (7, 10), (12, 16), (19, 22), (0, 3), (5, 8), (0, 1), (4, 6), (2, 4), (6, 9), (14, 16), (17, 18), (13, 17), (18, 21), (4, 5), (7, 8), (11, 12), (13, 17), (2, 6), (9, 12), (6, 9), (10, 12)]
+     
     TWs=[[0 for i in range(2)]for j in range(n)]
     TWs[0][0]=0
     TWs[0][1]=23
@@ -1666,7 +1385,7 @@ def get_time_windows(n):
             TWs[i][1] = np.random.randint(1, 3) + TWs[i][0]
             if(TWs[i][1]>=23):
                 TWs[i][1]=22
-    '''
+    
     return TWs
 
 
